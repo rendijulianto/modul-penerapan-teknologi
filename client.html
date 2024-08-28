@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.io Notifications</title>
+  </head>
+  <body>
+    <h1>Socket.io Notification Example</h1>
+    <div id="notification"></div>
+
+    <script
+      src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+      integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let params = new URLSearchParams(window.location.search);
+      const socket = io("http://localhost:3000");
+
+      // Ganti dengan ID saluran, nama pengguna, dan titik koordinat yang sesuai
+      const channelId = params.get("channelId") || "channel123";
+      const userName = params.get("userName") || "User123";
+      const coordinates = {
+        lat: 37.7749 + Math.random() / 100,
+        lng: -122.4194 + Math.random() / 100,
+      };
+
+      // Bergabung dengan saluran
+      socket.emit("joinChannel", { channelId, name: userName, coordinates });
+
+      // Mendengarkan notifikasi
+      socket.on("notification", (msg) => {
+        console.log(msg);
+        const notificationDiv = document.getElementById("notification");
+        notificationDiv.innerHTML = `<p>${msg}</p>`;
+
+        // Tampilkan notifikasi di Chrome
+        if (Notification.permission === "granted") {
+          new Notification("New Notification", {
+            body: msg,
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              new Notification("New Notification", {
+                body: msg,
+              });
+            }
+          });
+        }
+      });
+
+      //   channelUsers
+      socket.on("channelUsers", (users) => {
+        console.log(users);
+      });
+    </script>
+  </body>
+</html>

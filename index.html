@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Page -->
+    <div id="page">
+      <!-- Sub Header -->
+      <div class="sub-header">
+        <div class="container">
+          <h1>Broadcaster - Whastapp Janjian</h1>
+        </div>
+      </div>
+      <!-- Sub Header End -->
+
+      <!-- Main -->
+      <main>
+        <!-- Contact  -->
+        <div class="contact">
+          <div class="container">
+            <!-- Form -->
+            <form
+              method="POST"
+              id="contactForm"
+              name="contactForm"
+              action="php/send_phpmailer_file_download_email_template.php"
+            >
+              <div class="row">
+                <div class="col-lg-5" id="mainContent">
+                  <!-- Personal Details -->
+                  <div class="row box first">
+                    <div class="box-header">
+                      <h3><strong>1</strong>Nomor Tujuan</h3>
+                      <p>
+                        Masukan Daftar Nomor Tujuan yang akan di kirimkan pesan
+                      </p>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <textarea
+                          id="inputListNumber"
+                          class="form-control"
+                          name="message"
+                          placeholder="6281234567890|Nama Tujuan
+6281234567890|Nama Tujuan 2
+6281234567890|Nama Tujuan 3"
+                          data-parsley-pattern="^[a-zA-Z0-9\s.:,!?']+$"
+                          required
+                        >
+6282129632854|Rendi Julianto</textarea
+                        >
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <button
+                          class="btn btn-secondary w-100"
+                          type="button"
+                          id="btnValidasi"
+                        >
+                          Validasi Nomor
+                          <i class="fa fa-check" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Personal Details End -->
+                  <!-- Message -->
+                  <div class="row box">
+                    <div class="box-header">
+                      <h3><strong>2</strong>Message</h3>
+                      <p>
+                        Untuk dinamiskan nama tujuan gunakan kode
+                        <b>[nama]</b> dan lokasi dengan kode <b>[lokasi]</b>
+                        di dalam pesan
+                      </p>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <textarea
+                          id="inputMessage"
+                          class="form-control"
+                          name="message"
+                          placeholder="Halo [nama],
+Semoga Anda dalam keadaan baik.
+Saya ingin mengajak Anda untuk bertemu dan berdiskusi terkait [topik/permasalahan yang ingin dibahas].
+
+Apakah Anda berkenan bertemu di:
+Tempat: [nama tempat]
+Hari/Tanggal: [hari, tanggal]
+Waktu: [jam]
+Lokasi: [alamat]
+Saya berharap waktu ini cocok untuk Anda. Mohon konfirmasinya, dan terima kasih atas perhatian Anda."
+                          data-parsley-pattern="^[a-zA-Z0-9\s.:,!?']+$"
+                          required
+                        >
+Halo *[nama]*,
+Semoga Anda dalam keadaan baik.
+Saya ingin mengajak Anda untuk bertemu dan berdiskusi terkait tugas yang akan kita kerjakan bersama.
+
+Apakah Anda berkenan bertemu di:
+Tempat: Start Up Cafe Asia Afrika
+Hari/Tanggal: Senin, 1 Januari 2023
+Waktu: *10.00 - Selesai*
+Lokasi: [lokasi]
+Saya berharap waktu ini cocok untuk Anda. Mohon konfirmasinya, dan terima kasih atas perhatian Anda.</textarea
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Message End -->
+                  <!-- File Uploader -->
+
+                  <!-- Terms End -->
+                  <!-- Submit-->
+                  <div class="row box">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <button
+                          type="submit"
+                          name="submit"
+                          class="btn btn-primary w-100"
+                        >
+                          Kirim
+                          <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Submit -->
+                </div>
+                <div class="col-lg-7" id="sidebar">
+                  <div class="row box">
+                    <div class="box-header">
+                      <h3><strong>3</strong>Lokasi</h3>
+                      <p>
+                        Lokasi pertemuan, silahkan pilih dengan map box di bawah
+                      </p>
+                    </div>
+                    <div class="col-md-12">
+                      <div id="map"></div>
+                      <!-- titik koordinat -->
+                      <!-- titik koordinat -->
+                      <div class="form-group mt-2">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="position"
+                          name="position"
+                          placeholder="Longitude, Latitude (Koordinat)"
+                          readonly
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- File Uploader End -->
+                  <!-- Terms -->
+                  <div class="row box">
+                    <div class="box-header">
+                      <h3><strong>4</strong>Media ( Optional )</h3>
+                      <p>
+                        Silahkan upload media yang akan di kirimkan kepada
+                        tujuan file yang dapat di kirimkan adalah image, audio
+                        dan video.
+                      </p>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <input
+                          type="file"
+                          class="form-control"
+                          name="image"
+                          accept="image/*,audio/*,video/*"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row box">
+                    <div class="box-header">
+                      <h3><strong>5</strong>Dokument ( Optional )</h3>
+                      <p>
+                        Silahkan upload file yang akan di kirimkan kepada tujuan
+                        file yang dapat di kirimkan adalah pdf, xls, xlsx, doc,
+                      </p>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <input
+                          type="file"
+                          class="form-control"
+                          name="file"
+                          accept=".pdf,.xls,.xlsx,.doc,.docx"
+                          placeholder="https://example.com/file.pdf"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <!-- Form End -->
+          </div>
+        </div>
+        <!-- Contact End -->
+      </main>
+      <!-- Main End -->
+
+      <!-- Footer -->
+      <footer class="main-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-8">
+              <ul id="subFooterLinks">
+                <li>
+                  <a
+                    href="https://codecanyon.net/user/ultimatewebsolutions"
+                    target="_blank"
+                    >With <i class="fa fa-heart"></i> by EBS-RJ-BY-SY</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <div id="copy">© 2024 Broadcaster - Whastapp Janjian</div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- Footer End -->
+    </div>
+    <!-- Page End -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+    <script src="piwapi.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const PIWAPI_API_KEY = "c8d0179c3fe27d7faadd8ef95db27f6a0c55c4d6";
+      const PIWAPI_DEVICE_ID =
+        "172068342663923f49e5241343aa7acb6a06a751e7668f8ba259705";
+
+      const MAPBOX_API_KEY =
+        "pk.eyJ1IjoiYmVsaXNjcmlwdCIsImEiOiJjbTAyY2hjYXUwMHd1Mm1zN3E0bThwaW1qIn0.WhJaoZLTi1J2Yup8rU_OZg";
+
+      const MAPBOX_STYLE = "mapbox://styles/mapbox/streets-v11";
+    </script>
+    <script>
+      const piwapi = new PiwapiService(PIWAPI_API_KEY, PIWAPI_DEVICE_ID);
+
+      $("#btnValidasi").click(function () {
+        let numbers = $("#inputListNumber").val().split("\n");
+        let validNumbers = [];
+
+        let promises = numbers.map((number) => {
+          let [phone, name] = number.split("|");
+          if (phone.length >= 10 && phone.length <= 15) {
+            phone = phone.replace(/[^0-9]/g, "");
+            phone = phone.replace(/^0/, "62");
+
+            // Return the promise from validateNumber
+            return piwapi.validateNumber(phone).then((response) => {
+              if (response.status === 200) {
+                validNumbers.push(phone + "|" + name);
+              }
+            });
+          } else {
+            // Return a resolved promise for numbers that do not meet length requirements
+            return Promise.resolve();
+          }
+        });
+
+        // Wait for all validations to complete
+        Promise.all(promises).then(() => {
+          alert("Nomor yang valid: " + validNumbers.length);
+          $("#inputListNumber").val(validNumbers.join("\n"));
+        });
+      });
+
+      // Set your Mapbox access token
+      mapboxgl.accessToken = MAPBOX_API_KEY;
+
+      // Initialize the map
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [107.6098, -6.9147],
+        zoom: 12,
+        width: "100px",
+      });
+
+      // Add geocoder (address input)
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        placeholder: "Cari alamat...",
+        marker: false,
+      });
+
+      // Append the geocoder to the map
+      map.addControl(geocoder);
+
+      // Initialize the marker with null, it will be created after the first search
+      let marker = null;
+
+      // Function to create or move the marker
+      function setMarker(coordinates) {
+        if (marker) {
+          marker.setLngLat(coordinates);
+        } else {
+          marker = new mapboxgl.Marker({
+            draggable: true,
+          })
+            .setLngLat(coordinates)
+            .addTo(map);
+        }
+
+        document.getElementById("position").value = coordinates;
+
+        // Center the map to the new coordinates
+        map.flyTo({ center: coordinates, zoom: 15 });
+
+        // Update address input when the marker is dragged
+        marker.on("dragend", function () {
+          const lngLat = marker.getLngLat();
+          fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?access_token=${mapboxgl.accessToken}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              const newAddress =
+                data.features[0]?.place_name || "Alamat tidak ditemukan";
+              document.getElementById("position").value = lngLat.toArray();
+            });
+        });
+      }
+
+      // When a result is returned, update the marker position
+      geocoder.on("result", function (e) {
+        const coordinates = e.result.geometry.coordinates;
+        setMarker(coordinates);
+      });
+
+      // Add click event to the map to get coordinates
+      map.on("click", function (e) {
+        const coordinates = [e.lngLat.lng, e.lngLat.lat];
+        setMarker(coordinates);
+      });
+
+      // Synchronize the map with the input field
+      document
+        .getElementById("position")
+        .addEventListener("input", function (e) {
+          const query = e.target.value;
+          geocoder.query(query);
+        });
+
+      // inputListNumber
+      // inputMessage
+      let inputListNumber = document.getElementById("inputListNumber");
+      let inputMessage = document.getElementById("inputMessage");
+
+      //btn submit
+      let btnSubmit = document.querySelector("button[type=submit]");
+      btnSubmit.addEventListener("click", function (e) {
+        e.preventDefault();
+        let number = inputListNumber.value;
+        let message = inputMessage.value;
+
+        let address = document.querySelector("input[name=position]").value;
+        let dataImage = document.querySelector("input[name=image]");
+        let dataFile = document.querySelector("input[name=file]");
+        // ubah button submit menjadi loading
+        btnSubmit.innerHTML = "Loading...";
+        btnSubmit.disabled = true;
+        // seluruh input di disable
+        inputListNumber.disabled = true;
+        inputMessage.disabled = true;
+        dataImage.disabled = true;
+        dataFile.disabled = true;
+
+        // loop data number
+        let numbers = number.split("\n");
+
+        numbers.forEach((number) => {
+          let [phone, name] = number.split("|");
+          let pesan = message.replace("[nama]", name);
+          pesan = pesan.replace(
+            "[lokasi]",
+            "https://localhsot:8080/?q=" + address
+          );
+
+          piwapi
+            .sendMessageWhatsapp({
+              recipient: phone,
+              message: pesan,
+            })
+            .then((response) => {
+              console.log("Message sent:", response);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+
+          if (dataImage.files.length > 0) {
+            console.log(dataImage.files);
+            piwapi
+              .sendMessageWhatsapp({
+                recipient: phone,
+                media_file: dataImage.files,
+              })
+              .then((response) => {
+                console.log("Media message sent:", response);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          }
+          if (dataFile.files.length > 0) {
+            piwapi
+              .sendMessageWhatsapp({
+                recipient: phone,
+                document_file: dataFile.files,
+                document_name: dataFile.files,
+              })
+              .then((response) => {
+                console.log("Media message sent:", response);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapbox Directions: Realtime Route Calculation</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link
+    href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+    rel="stylesheet"
+  />
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+    #map {
+      width: 100%;
+      height: 70%;
+      border-bottom: 5px solid #333;
+      animation: fadeIn 2s ease-in-out;
+    }
+    #info {
+      padding: 15px;
+      background: linear-gradient(to right, #ffffff, #e0e0e0);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin: 15px;
+      animation: slideIn 1.5s ease-out;
+    }
+    .info-section {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+      opacity: 0;
+      animation: fadeIn 1.5s ease-in forwards;
+    }
+    .info-section:nth-child(1) {
+      animation-delay: 0.5s;
+    }
+    .info-section:nth-child(2) {
+      animation-delay: 1s;
+    }
+    .info-section:nth-child(3) {
+      animation-delay: 1.5s;
+    }
+    .info-section:nth-child(4) {
+      animation-delay: 2s;
+    }
+    .mapboxgl-ctrl-logo {
+      display: none;
+    }
+    .mapboxgl-ctrl-bottom-left,
+    .mapboxgl-ctrl-bottom-right {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .weather-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      margin-bottom: 15px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s forwards;
+    }
+    .weather-card:not(:first-child) {
+      animation-delay: 0.1s;
+    }
+    .weather-card .icon {
+      font-size: 30px;
+      margin-right: 10px;
+    }
+    .weather-card .temperature {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 0;
+    }
+    .weather-card .summary {
+      font-size: 1.1em;
+      color: #555;
+    }
+    .weather-card .time {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="row">
+    <div class="col-lg-6">
+      <div id="info">
+        <div class="info-section" id="destination">
+          <i class="fa fa-map-marker-alt"></i>
+          <span>Destination:</span>
+        </div>
+        <div id="distance" class="info-section">
+          <i class="fa fa-road"></i>
+          <span>Distance:</span> Calculating...
+        </div>
+        <div id="duration-walking" class="info-section">
+          <i class="fa fa-walking"></i>
+          <span>Walking Duration:</span> Calculating...
+        </div>
+        <div id="duration-cycling" class="info-section">
+          <i class="fa fa-bicycle"></i>
+          <span>Cycling Duration:</span> Calculating...
+        </div>
+        <div id="duration-driving" class="info-section">
+          <i class="fa fa-car"></i>
+          <span>Driving Duration:</span> Calculating...
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div id="weather-cards" class="container row"></div>
+    </div>
+  </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
+    type="text/css"
+  />
+
+  <script>
+    const MAPBOX_API_KEY =
+      "pk.eyJ1IjoiYmVsaXNjcmlwdCIsImEiOiJjbTAyY2hjYXUwMHd1Mm1zN3E0bThwaW1qIn0.WhJaoZLTi1J2Yup8rU_OZg";
+    mapboxgl.accessToken = MAPBOX_API_KEY;
+
+    // Initialize the map
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: [106.8166, -6.2], // Default center [longitude, latitude]
+      zoom: 13,
+    });
+
+    let params = new URLSearchParams(window.location.search);
+    let q = params.get("q");
+    const destination = [q];
+
+    function getRoute(currentPosition) {
+      const urlBase = "https://api.mapbox.com/directions/v5/mapbox/";
+      const coordinates = `${currentPosition[0]},${currentPosition[1]};${destination[0]},${destination[1]}`;
+      const accessToken = mapboxgl.accessToken;
+
+      const place = `https://api.mapbox.com/geocoding/v5/mapbox.places/${destination}.json?access_token=${mapboxgl.accessToken}`;
+
+      fetch(place)
+        .then((response) => response.json())
+        .then((data) => {
+          let tempat = data.features[0].place_name;
+          document.getElementById("destination").textContent = `Destination: ${tempat}`;
+        });
+
+      const modes = ["walking", "cycling", "driving"];
+      modes.forEach((mode) => {
+        const url = `${urlBase}${mode}/${coordinates}?geometries=geojson&access_token=${accessToken}`;
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            const route = data.routes[0];
+            const distanceKm = (route.distance / 1000).toFixed(2);
+            const durationMin = (
